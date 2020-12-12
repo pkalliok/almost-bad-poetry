@@ -1,9 +1,7 @@
 
 def rhythm_distance(target, sample):
     return min(raw_rhythm_dist(target, sample),
-            raw_rhythm_dist([(0.0, 0.0)] + target, sample),
-            raw_rhythm_dist([(1.0, 0.0), (0.0, 0.0)] + target, sample)) \
-        / len(target)
+            raw_rhythm_dist([(0.0, 0.0)] + target, sample)) / len(target)
 
 def raw_rhythm_dist(target, sample):
     if len(target) == 0: return len(sample)
