@@ -1,4 +1,8 @@
 
+import re
+
+last_word_re = re.compile(r'(\w+)\W*$')
+
 def rhythm_distance(target, sample):
     return min(raw_rhythm_dist(target, sample),
             raw_rhythm_dist([(0.0, 0.0)] + target, sample)) / len(target)
@@ -35,10 +39,16 @@ def rhyming_dist(target, sample):
             for syl_weight, syl1, syl2 in zip(syl_weights, target, sample)
             for part_weight, part1, part2 in zip(part_weights, syl1, syl2))
 
-def find_most_similar_unused(target, clause_db):
+def last_word(clause):
+    match = last_word_re.search(clause)
+    if not match: return ''
+    return match.group(1)
+
+def find_most_similar_unused(target, clause_db, forbidden_ends):
     best, best_dist = None, 37.4 # verrrrry important
     rhythm, rhyme = target
     for clause, (sample_rhythm, sample_rhyme) in clause_db['db']:
+        if last_word(clause) in forbidden_ends: continue
         dist = rhythm_distance(rhythm, sample_rhythm) \
                 + rhyming_dist(rhyme, sample_rhyme) \
                 + (clause in clause_db['used'])
