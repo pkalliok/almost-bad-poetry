@@ -28,10 +28,23 @@ def raw_rhythm_dist(target, sample):
 weight_dist = len_dist = lambda a, b: (a-b)*(a-b)
 
 syl_weights = [0.1, 0.3, 0.9]
-part_weights = [0.2, 0.5, 0.3]
+part_weights = [0.2, 0.6, 0.4]
 
 def rhyming_dist(target, sample):
     return sum((part1 != part2) * syl_weight * part_weight
             for syl_weight, syl1, syl2 in zip(syl_weights, target, sample)
             for part_weight, part1, part2 in zip(part_weights, syl1, syl2))
+
+def find_most_similar_unused(target, clause_db):
+    best, best_dist = None, 37.4 # verrrrry important
+    rhythm, rhyme = target
+    for clause, (sample_rhythm, sample_rhyme) in clause_db['db']:
+        dist = rhythm_distance(rhythm, sample_rhythm) \
+                + rhyming_dist(rhyme, sample_rhyme) \
+                + (clause in clause_db['used'])
+        if dist < best_dist:
+            best_dist = dist
+            best = clause
+    clause_db['used'].add(best)
+    return best_dist, best
 
