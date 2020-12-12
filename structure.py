@@ -21,10 +21,10 @@ def fix_weights(weights):
 
 def stress_structure(clause):
     return fix_weights([len(startp) + 0.5*len(nucl) - 0.5
-        for startp, nucl in start_re.findall(clause)])
+        for startp, nucl in start_re.findall(" " + clause)])
 
 def length_structure(clause):
-    return [min(1.0, (len(cons)>1)*0.1 + len(nucl)*0.8 + len(tail)*0.4 - 0.8)
+    return [min(1.0, (len(cons)>1)*0.1 + len(nucl)*0.4 + len(tail)*0.2)
             for cons, nucl, tail in syllable_re.findall(clause)]
 
 def rhyme_structure(clause):
