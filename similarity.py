@@ -35,26 +35,23 @@ syl_weights = [0.1, 0.3, 0.9]
 part_weights = [0.2, 0.6, 0.4]
 
 def rhyming_dist(target, sample):
-    return sum((part1 != part2) * syl_weight * part_weight
+    return sum(((part1 != part2) + (len(part1) != len(part2)))
+                * syl_weight * part_weight
             for syl_weight, syl1, syl2 in zip(syl_weights, target, sample)
             for part_weight, part1, part2 in zip(part_weights, syl1, syl2))
 
 def last_word(clause):
     match = last_word_re.search(clause)
     if not match: return ''
-    return match.group(1)
+    return match.group(1).lower()
 
 def find_most_similar_unused(target, clause_db, forbidden_ends):
-    best, best_dist = None, 37.4 # verrrrry important
     rhythm, rhyme = target
-    for clause, (sample_rhythm, sample_rhyme) in clause_db['db']:
-        if last_word(clause) in forbidden_ends: continue
-        dist = rhythm_distance(rhythm, sample_rhythm) \
-                + rhyming_dist(rhyme, sample_rhyme) \
-                + (clause in clause_db['used'])
-        if dist < best_dist:
-            best_dist = dist
-            best = clause
-    clause_db['used'].add(best)
-    return best_dist, best
+    best = min((rhythm_distance(rhythm, sample_rhythm)
+                + rhyming_dist(rhyme, sample_rhyme)
+                + (clause in clause_db['used']), clause)
+            for clause, (sample_rhythm, sample_rhyme) in clause_db['db']
+            if last_word(clause) not in forbidden_ends)
+    clause_db['used'].add(best[1])
+    return best
 
