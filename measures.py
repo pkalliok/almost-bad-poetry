@@ -28,10 +28,9 @@ tasaruno = (
       (1.0, 0.9), (0.0, 0.4), (0.0, 0.4), (1.0, 1.0), (0.5, 1.0)]],
     [0, 1, 0, 1, 2, 3, 2, 3])
 
-def generate_poem(measure, clause_db):
+def generate_poem(measure, clause_db, used_end_words=set()):
     rhythms, succession = measure
     rhymes = {}
-    used_end_words = set()
     def generate_clause(stanza_class):
         rhyme = rhymes.get(stanza_class, [('',)*3]*3)
         dist, clause = find_most_similar_unused(
