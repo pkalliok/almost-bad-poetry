@@ -1,8 +1,9 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
+# coding: utf-8
 
 from ingest import load_url, save_state, load_state
 from measures import measure_map, generate_poem
-import html
+import html, sys
 
 STATE_FILE = 'used_stanzas.pickle'
 
@@ -15,31 +16,36 @@ HTTP_START = """Content-type: text/html; charset=utf-8
 """
 HTTP_END = "</body></html>"
 
+def p(html): sys.stdout.buffer.write((html + '\n').encode('utf-8'))
+
 def show_form(form):
-    print(HTTP_START.format('Anna aineisto'))
-    print('<p>Teen runon antamastasi tekstistä. Täytä nämä tiedot:</p>')
-    print('<form method=GET><fieldset><legend>Runoaineisto</legend>')
-    print('<p><label for=url>Www-sivu, josta teen runon:</label>')
-    print('<input type=text name=url id=url value="https://fi.wikipedia.org/wiki/Grimmin_sadut"></p>')
-    print('<p><label for=tee_runo>Runomitta, jota yritän noudattaa:</label>')
-    print('<select name=tee_runo id=tee_runo>')
-    print('<option value=limerikki>Limerikki - A, A, B, B, A</option>')
-    print('<option value=nelidaktyyli>Daktyyli - Humppapa, pumppapa</option>')
-    print('<option value=perusruno>Perusriimi heksametriin</option>')
-    print('</select></p></fieldset>')
-    print('<input type=submit value="Runo tänne!"></form>')
-    print(HTTP_END)
+    p(HTTP_START.format('Anna aineisto'))
+    p('<p>Teen runon antamastasi tekstistä. Täytä nämä tiedot:</p>')
+    p('<form method=GET><fieldset><legend>Runoaineisto</legend>')
+    p('<p><label for=url>Www-sivu, josta teen runon:</label>')
+    p('<input type=text name=url id=url value="https://fi.wikipedia.org/wiki/Grimmin_sadut"></p>')
+    p('<p><label for=tee_runo>Runomitta, jota yritän noudattaa:</label>')
+    p('<select name=tee_runo id=tee_runo>')
+    p('<option value=limerikki>Limerikki - A, A, B, B, A</option>')
+    p('<option value=nelidaktyyli>Daktyyli - Humppapa, pumppapa</option>')
+    p('<option value=perusruno>Perusriimi heksametriin</option>')
+    p('</select></p></fieldset>')
+    p('<input type=submit value="Runo tänne!"></form>')
+    p('<p>(tässä saattaa kestää....)</p>')
+    p(HTTP_END)
 
 def make_poem(measure, corpus_url):
     if measure not in measure_map: raise ValueError("unknown measure")
+    p(HTTP_START.format(measure.upper() + ' sinulle'))
+    p('<p>(tässä saattaa kestää....)</p>')
     state = load_url(corpus_url)
     load_state(state, STATE_FILE)
-    print(HTTP_START.format("{} numero {}".format(measure, len(state['used']))))
-    print('<blockquote><cite>')
-    for line in generate_poem(measure_map[measure], state, {'ei'}):
-        print(html.escape(line) + '<br>')
-    print('</cite></blockquote>')
-    print(HTTP_END)
+    p('<p>Tässä runosi, ole hyvä!</p>')
+    p('<blockquote><cite>')
+    for line in generate_poem(measure_map[measure], state, {'ei', 'iii'}):
+        p(html.escape(line) + u'<br>')
+    p('</cite></blockquote>')
+    p(HTTP_END)
     save_state(state, STATE_FILE)
 
 def handle_request(form):
