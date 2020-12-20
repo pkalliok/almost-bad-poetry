@@ -36,7 +36,7 @@ def show_form(form):
 
 def make_poem(measure, corpus_url):
     if measure not in measure_map: raise ValueError("unknown measure")
-    p(HTTP_START.format(measure.upper() + ' sinulle'))
+    p(HTTP_START.format(measure.capitalize() + ' sinulle'))
     p('<p>(tässä saattaa kestää....)</p>')
     state = load_url(corpus_url)
     load_state(state, STATE_FILE)
