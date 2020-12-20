@@ -32,9 +32,12 @@ def load_url(url):
     return dict(db=list(clauses(url_words(url))), used=set())
 
 def save_state(state, filename):
-    dump(state['used'], open(filename, "w"))
+    dump(state['used'], open(filename, "wb"))
 
 def load_state(state, filename):
-    state['used'] |= load(open(filename))
+    try: f = open(filename, "rb")
+    except FileNotFoundError: return state
+    try: state['used'] |= load(f)
+    except EOFError: return state
     return state
 
