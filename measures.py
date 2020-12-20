@@ -28,6 +28,12 @@ tasaruno = (
       (1.0, 0.9), (0.0, 0.4), (0.0, 0.4), (1.0, 1.0), (0.5, 1.0)]],
     [0, 1, 0, 1, 2, 3, 2, 3])
 
+measure_map = dict(
+    limerikki = limerick_measure,
+    nelidaktyyli = nelidaktyyli,
+    perusruno = tasaruno,
+)
+
 def generate_poem(measure, clause_db, used_end_words=set()):
     rhythms, succession = measure
     rhymes = {}

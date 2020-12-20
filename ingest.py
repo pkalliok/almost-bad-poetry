@@ -1,5 +1,8 @@
 
 import structure
+import requests, re
+from html import unescape
+from pickle import load, dump
 
 def file_words(f):
     return (w for line in f for w in line.split())
@@ -18,4 +21,20 @@ def clauses(words):
 
 def load_data(filename):
     return dict(db=list(clauses(file_words(open(filename)))), used=set())
+
+tag_re = re.compile(r'''<([^>]|"[^"]*"|'[^']*')*>''')
+def only_text(html): return unescape(tag_re.sub(' ', html))
+
+def url_words(url):
+    return only_text(requests.get(url).text).split()
+
+def load_url(url):
+    return dict(db=list(clauses(url_words(url))), used=set())
+
+def save_state(state, filename):
+    dump(state['used'], open(filename, "w"))
+
+def load_state(state, filename):
+    state['used'] |= load(open(filename))
+    return state
 
