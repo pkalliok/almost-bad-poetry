@@ -34,11 +34,13 @@ measure_map = dict(
     perusruno = tasaruno,
 )
 
+no_rhyme = [('xxxxx',)*3]*3
+
 def generate_poem(measure, clause_db, used_end_words=set()):
     rhythms, succession = measure
     rhymes = {}
     def generate_clause(stanza_class):
-        rhyme = rhymes.get(stanza_class, [('',)*3]*3)
+        rhyme = rhymes.get(stanza_class, no_rhyme)
         dist, clause = find_most_similar_unused(
                 (rhythms[stanza_class], rhyme), clause_db, used_end_words)
         used_end_words.add(last_word(clause))
